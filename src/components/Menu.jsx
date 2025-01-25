@@ -1,11 +1,12 @@
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import logo from '../assets/logo.svg'
+import logo from  '../assets/logo.svg'
 
 const navigation = [
     /* This is literally just a list of the values that will be displayed in the navbar. */
-  { name: 'Home', href: '#', current: true },
-  { name: 'Stuff', href: '#', current: false }
+  { name: 'Home', href: '/home', current: true },
+  { name: 'About our Software', href: '/stuff', current: false },
+  { name: 'Contact Us', href: '/stuff', current: false }
 ]
 
 function classNames(...classes) {
