@@ -5,6 +5,8 @@ import requests
 import google.generativeai as genai
 from dotenv import load_dotenv
 import os
+from dateutil import parser
+import re
 
 # Load environment variables from .env file
 load_dotenv()
@@ -66,9 +68,15 @@ def get_date_and_amnt(receipt_lines):
     top_lists = []
     amt_height = None
     best_height = [1000000, ""]
-    datestr = ''
+    date_patterns = [
+        r'\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b',  # Matches dates like 12/31/2020, 31-12-2020
+        r'\b\d{4}[/-]\d{1,2}[/-]\d{1,2}\b',    # Matches dates like 2020/12/31, 2020-12-31
+        r'\b\d{1,2} \w{3,9} \d{2,4}\b',        # Matches dates like 31 Dec 2020, 12 Oct 21
+        r'\b\w{3,9} \d{1,2}, \d{4}\b',         # Matches dates like December 31, 2020
+        r'\b\d{1,2} \w{3,9} \d{4}\b'           # Matches dates like 31 December 2020
+    ]
     dateobj = None
-    potential_amt_words = ["Amount", "Total", "Amount:", "Total:", "AMOUNT", "TOTAL", "AMOUNT:", "TOTAL:", "Amt", "AMT", "Amt:", "AMT:"]
+    potential_amt_words = ["Amount", "Total", "Amount:", "Total:", "AMOUNT", "TOTAL", "AMOUNT:", "TOTAL:", "Amt", "AMT", "Amt:", "AMT:", "Balance", "BALANCE", "Balance:", "BALANCE:"]
 
     # go through each word of each line
     for j in range(len(receipt_lines)):
@@ -78,20 +86,14 @@ def get_date_and_amnt(receipt_lines):
             # looking for potential totals
             if receipt_lines[j]["Words"][i]["WordText"] in potential_amt_words and amt_height == None:
                 amt_height = receipt_lines[j]["Words"][i]["Top"]
+            for pattern in date_patterns:
+                if re.match(pattern, receipt_lines[j]["Words"][i]["WordText"]):
+                    try:
+                        dateobj = parser.parse(receipt_lines[j]["Words"][i]["WordText"])
+                        print(f"Parsed date: {receipt_lines[j]["Words"][i]["WordText"]} -> {dateobj}")
+                    except (ValueError, OverflowError, receipt_lines[j]["Words"][i]["WordText"]) as e:
+                        print(f"Error parsing date: {e}")
             # looking for strs that meet date format (clunky method bc didnt want to require regex package)
-            elif len(receipt_lines[j]["Words"][i]["WordText"]) > 5:
-                if receipt_lines[j]["Words"][i]["WordText"][2] == "/" and receipt_lines[j]["Words"][i]["WordText"][5] == "/" and len(receipt_lines[j]["Words"][i]["WordText"]) >= 9:
-                    datestr = receipt_lines[j]["Words"][i]["WordText"]
-                    dateobj = datetime.strptime(datestr, '%m/%d/%Y')
-                elif receipt_lines[j]["Words"][i]["WordText"][2] == "-" and receipt_lines[j]["Words"][i]["WordText"][5] == "-" and len(receipt_lines[j]["Words"][i]["WordText"]) >= 9:
-                    datestr = receipt_lines[j]["Words"][i]["WordText"]
-                    dateobj = datetime.strptime(datestr, '%m-%d-%Y')
-                elif receipt_lines[j]["Words"][i]["WordText"][2] == "/" and receipt_lines[j]["Words"][i]["WordText"][5] == "/":
-                    datestr = receipt_lines[j]["Words"][i]["WordText"]
-                    dateobj = datetime.strptime(datestr, '%m/%d/%y')
-                elif receipt_lines[j]["Words"][i]["WordText"][2] == "-" and receipt_lines[j]["Words"][i]["WordText"][5] == "-":
-                    datestr = receipt_lines[j]["Words"][i]["WordText"]
-                    dateobj = datetime.strptime(datestr, '%m-%d-%y')
             
             # tracking heights of all words to compare with height of total
             top_lists.append([receipt_lines[j]["Words"][i]["Top"], receipt_lines[j]["Words"][i]["WordText"]])
