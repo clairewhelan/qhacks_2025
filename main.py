@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-
+import json as JSON
 import requests
 
 
@@ -54,14 +54,15 @@ def ocr_space_url(url, overlay=True, api_key='K82843374088957', language='eng'):
     return r.content.decode()
 
 # Use examples:
-test_url = ocr_space_url(url='https://preview.redd.it/strange-charge-on-walmart-receipt-common-or-error-v0-en7wuy4nx7bb1.jpg?auto=webp&s=9a0c2d749de58da9e5d7e1ad0971037bdcb69b78')
-print(test_url)
+test_url = ocr_space_url(url='https://makereceipt.com/images/restaurant-bar-receipt-sample.jpg')
+receipt = JSON.loads(test_url)
+print(receipt['ParsedResults'][0]['ParsedText'])
 
 app = Flask(__name__)
 
 @app.route('/api/data', methods=['GET'])
 def get_data():
-    return test_url
+    return receipt
 
 if __name__ == '__main__':
     app.run(debug=True)
