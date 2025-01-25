@@ -61,7 +61,7 @@ def ocr_space_url(url, overlay=True, api_key=os.getenv('OCR_KEY'), language='eng
                       )
     return r.content.decode()
 
-
+'''Gets the date and total amount from the receipt'''
 def get_date_and_amnt(receipt_lines):
     top_lists = []
     amt_height = None
@@ -102,7 +102,7 @@ def get_date_and_amnt(receipt_lines):
 
     return {"date": dateobj.strftime('%m/%d/%Y'), "total": best_height[1]}
 
-
+'''Gets the type of expense from the receipt'''
 def get_type_genai(receipt_lines):
     genai.configure(api_key=os.getenv('GENAI_KEY'))
     model = genai.GenerativeModel("gemini-1.5-flash")
@@ -112,7 +112,7 @@ def get_type_genai(receipt_lines):
     return {"type": response.text.rstrip("\n")}
 
 '''
-takes a url for a receipt image and returns a dictionary with the date and total
+Takes a url for a receipt image and returns a dictionary with the date and total, using above funcs
 '''
 def get_data_frm_url(url) :
     receipt = JSON.loads(url)
