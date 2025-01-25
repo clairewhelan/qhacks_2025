@@ -4,8 +4,8 @@ import logo from '../assets/logo.svg'
 
 const navigation = [
     /* This is literally just a list of the values that will be displayed in the navbar. */
-  { name: 'Home', href: '#', current: true },
-  { name: 'Stuff', href: '#', current: false }
+  { name: 'Home', href: '/home', current: true },
+  { name: 'Stuff', href: '/stuff', current: false }
 ]
 
 function classNames(...classes) {

@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
+
 import Menu from './components/Menu.jsx';
+import Home from './pages/Home.jsx';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0);
   const [initialData, setData] = useState({}); // Default to an empty object.
 
   useEffect(() => {
@@ -14,22 +17,16 @@ function App() {
   }, []);
 
   return (
-    <>
-      <Menu />
-      <h1>{initialData.message}</h1>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+    <Router>
+      <div className="flex flex-col min-h-screen">
+        <Menu />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/home" element={<Home initialData={initialData} />} />
+          </Routes>
+        </main>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </Router>
   );
 }
 
