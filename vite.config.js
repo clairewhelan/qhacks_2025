@@ -2,12 +2,6 @@ import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react';
 
-require('dotenv').config()
-module.exports = {
-  GENAI_KEY: process.env.GENAI_KEY,
-  OCR_KEY: process.env.OCR_KEY,
-};
-
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
