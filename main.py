@@ -54,9 +54,22 @@ def ocr_space_url(url, overlay=True, api_key='K82843374088957', language='eng'):
     return r.content.decode()
 
 # Use examples:
+top_lists = []
+amt_height = None
+best_height = [1000000, ""]
 test_url = ocr_space_url(url='https://makereceipt.com/images/restaurant-bar-receipt-sample.jpg')
 receipt = JSON.loads(test_url)
-print(receipt['ParsedResults'][0]['ParsedText'])
+for j in range(len(receipt['ParsedResults'][0]["TextOverlay"]["Lines"])):
+    for i in range(len(receipt['ParsedResults'][0]["TextOverlay"]["Lines"][j]["Words"])):
+        if receipt['ParsedResults'][0]["TextOverlay"]["Lines"][j]["Words"][i]["WordText"] == "Amount":
+            amt_height = receipt['ParsedResults'][0]["TextOverlay"]["Lines"][j]["Words"][i]["Top"]
+        top_lists.append([receipt['ParsedResults'][0]["TextOverlay"]["Lines"][j]["Words"][i]["Top"], receipt['ParsedResults'][0]["TextOverlay"]["Lines"][j]["Words"][i]["WordText"]])
+
+for i in range(len(top_lists)):
+    if abs(top_lists[i][0] - amt_height) - abs(best_height[0] - amt_height) < 0 and top_lists[i][1] != "Amount":
+        best_height = top_lists[i]
+
+print(best_height)
 
 app = Flask(__name__)
 
