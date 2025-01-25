@@ -55,8 +55,10 @@ def ocr_space_url(url, overlay=True, api_key='K82843374088957', language='eng'):
                       )
     return r.content.decode()
 
-# Use examples:
 
+'''
+takes a url for a receipt image and returns a dictionary with the date and total
+'''
 def get_data_frm_url(url) :
     top_lists = []
     amt_height = None
