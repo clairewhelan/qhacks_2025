@@ -1,13 +1,23 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
+
   const [count, setCount] = useState(0)
+
+  const [initialData, setData] = useState([{}]); // This is a hook that sets data to an empty string.
+  
+  useEffect(() => {
+    fetch('/api/data')
+      .then(response => response.json())
+      .then(data => setData(data));
+  }, []);
 
   return (
     <>
+    <h1>{initialData.message}</h1>
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
