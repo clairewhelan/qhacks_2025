@@ -1,23 +1,22 @@
-import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
+import reactLogo from './assets/react.svg';
+import viteLogo from '/vite.svg';
+import './App.css';
 
 function App() {
+  const [count, setCount] = useState(0);
+  const [initialData, setData] = useState({}); // Default to an empty object.
 
-  const [count, setCount] = useState(0)
-
-  const [initialData, setData] = useState([{}]); // This is a hook that sets data to an empty string.
-  
   useEffect(() => {
     fetch('/api/data')
       .then(response => response.json())
-      .then(data => setData(data));
+      .then(data => setData(data))
+      .catch(error => console.error('Error fetching data:', error));
   }, []);
 
   return (
     <>
-    <h1>{initialData.message}</h1>
+      <h1>{initialData.message}</h1>
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
@@ -39,7 +38,7 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
