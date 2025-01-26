@@ -98,9 +98,6 @@ function Data() {
         </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="text-left">
-            <label htmlFor="photoUrl" className="block text-sm font-medium text-white-900">
-              Photo URL
-            </label>
             <div className="mt-2">
               <input
                 id="photoUrl"

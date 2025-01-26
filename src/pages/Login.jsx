@@ -77,14 +77,14 @@ function Login() {
   };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm size-15">
+    <div className="flex min-h-full flex-1 flex-col justify-center px-12 py-12 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md size-15">
         <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white-900">
-          Sign in to your account.
+          Sign in to <span className='text-indigo-600'>your</span> account.
         </h2>
       </div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md px-24">
         {error && <div className="mb-4 text-red-500">{error}</div>}
         {message && <div className="mb-4 text-green-500">{message}</div>}
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -107,33 +107,34 @@ function Login() {
           </div>
 
           <div>
-            <div className="flex items-center justify-between">
-              <label htmlFor="password" className="block text-sm/6 font-medium text-white-900">
-                Password
-              </label>
-              <div className="text-sm">
-                <button
-                  type="button"
-                  onClick={handleForgotPassword}
-                  className="font-semibold text-blue-600 hover:text-white-500"
-                >
-                  Forgot password?
-                </button>
-              </div>
-            </div>
-            <div className="mt-2">
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                autoComplete="current-password"
-                value={formData.password}
-                onChange={handleChange}
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-              />
+          <div className="flex items-center justify-between">
+            <label htmlFor="password" className="block text-sm/6 font-medium text-white-900">
+              Password
+            </label>
+            <div className="text-sm ml-8"> {/* Added margin-left for spacing */}
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="font-semibold text-blue-600 hover:text-white-500"
+              >
+                Forgot password?
+              </button>
             </div>
           </div>
+          <div className="mt-2">
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              autoComplete="current-password"
+              value={formData.password}
+              onChange={handleChange}
+              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+            />
+          </div>
+        </div>
+
 
           <div>
             <button

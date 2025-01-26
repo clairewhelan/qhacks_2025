@@ -13,7 +13,7 @@ export default function Financials() {
         {stats.map((stat) => (
           <div
             key={stat.id}
-            className="mx-auto flex max-w-xs flex-col gap-y-4 bg-indigo-800 shadow-lg p-6 rounded-lg border border-indigo-200 hover:shadow-xl hover:scale-105 transform transition-all duration-300"
+            className="mx-auto flex max-w-xs flex-col gap-y-4 bg-indigo-800 shadow-lg p-6 rounded-lg border border-indigo-200"
           >
             <dt className="text-base font-medium text-white-600">{stat.name}</dt>
             <dd className="order-first text-3xl font-bold tracking-tight text-white-700 sm:text-5xl">
