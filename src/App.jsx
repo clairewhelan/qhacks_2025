@@ -4,6 +4,8 @@ import './App.css';
 
 import Menu from './components/Menu.jsx';
 import Home from './pages/Home.jsx';
+import Login from './pages/Login.jsx';
+import SignUp from './pages/SignUp.jsx';
 import './App.css';
 
 function App() {
@@ -23,6 +25,8 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/home" element={<Home initialData={initialData} />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/sign-up" element={<SignUp />} />
           </Routes>
         </main>
       </div>
