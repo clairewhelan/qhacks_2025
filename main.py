@@ -68,7 +68,7 @@ def get_date_and_amnt(receipt_lines):
     top_lists = []
     amt_height = None
     best_height = [1000000, ""]
-    date_patterns = [
+    DATE_PATTERNS = [
         r'\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b',  # Matches dates like 12/31/2020, 31-12-2020
         r'\b\d{4}[/-]\d{1,2}[/-]\d{1,2}\b',    # Matches dates like 2020/12/31, 2020-12-31
         r'\b\d{1,2} \w{3,9} \d{2,4}\b',        # Matches dates like 31 Dec 2020, 12 Oct 21
@@ -76,7 +76,7 @@ def get_date_and_amnt(receipt_lines):
         r'\b\d{1,2} \w{3,9} \d{4}\b'           # Matches dates like 31 December 2020
     ]
     dateobj = None
-    potential_amt_words = ["Amount", "Total", "Amount:", "Total:", "AMOUNT", "TOTAL", "AMOUNT:", "TOTAL:", "Amt", "AMT", "Amt:", "AMT:", "Balance", "BALANCE", "Balance:", "BALANCE:"]
+    POTENTIAL_AMT_WORDS = ["Amount", "Total", "Amount:", "Total:", "AMOUNT", "TOTAL", "AMOUNT:", "TOTAL:", "Amt", "AMT", "Amt:", "AMT:", "Balance", "BALANCE", "Balance:", "BALANCE:"]
 
     # go through each word of each line
     for j in range(len(receipt_lines)):
@@ -84,9 +84,9 @@ def get_date_and_amnt(receipt_lines):
             #print(j,receipt_lines[j]["Words"][i]["WordText"])
 
             # looking for potential totals
-            if receipt_lines[j]["Words"][i]["WordText"] in potential_amt_words and amt_height == None:
+            if receipt_lines[j]["Words"][i]["WordText"] in POTENTIAL_AMT_WORDS and amt_height == None:
                 amt_height = receipt_lines[j]["Words"][i]["Top"]
-            for pattern in date_patterns:
+            for pattern in DATE_PATTERNS:
                 if re.match(pattern, receipt_lines[j]["Words"][i]["WordText"]):
                     try:
                         dateobj = parser.parse(receipt_lines[j]["Words"][i]["WordText"])
@@ -99,7 +99,7 @@ def get_date_and_amnt(receipt_lines):
             top_lists.append([receipt_lines[j]["Words"][i]["Top"], receipt_lines[j]["Words"][i]["WordText"]])
 
     for i in range(len(top_lists)):
-        if abs(top_lists[i][0] - amt_height) - abs(best_height[0] - amt_height) < 0 and top_lists[i][1] not in potential_amt_words:
+        if abs(top_lists[i][0] - amt_height) - abs(best_height[0] - amt_height) < 0 and not re.search(r'[a-zA-Z]', top_lists[i][1]):
             best_height = top_lists[i]
 
     return {"date": dateobj.strftime('%m/%d/%Y'), "total": best_height[1]}
@@ -127,7 +127,8 @@ def get_data_frm_url(url) :
 
 #https://ocr.space/Content/Images/receipt-ocr-original.jpg
 #https://makereceipt.com/images/restaurant-bar-receipt-sample.jpg
-test_url = ocr_space_url(url='https://makereceipt.com/images/restaurant-bar-receipt-sample.jpg')
+#https://i.postimg.cc/jSrPyWJC/60c4199364474569561cba359d486e6c69ae8cba.jpg
+test_url = ocr_space_url(url='https://i.postimg.cc/jSrPyWJC/60c4199364474569561cba359d486e6c69ae8cba.jpg')
 print(get_data_frm_url(test_url))
 
 receipt_list = []
