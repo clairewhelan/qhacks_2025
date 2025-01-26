@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 from datetime import datetime
 import json as JSON
 import requests
@@ -129,7 +129,7 @@ def get_type_genai(receipt_lines):
 '''
 Takes a url for a receipt image and returns a dictionary with the date and total, using above funcs
 '''
-def get_data_frm_url(url) :
+def get_data_frm_json(url) :
     receipt = JSON.loads(url)
     print(receipt)
     # dict of lines in receipt(parses lines within columns, so ex. "Gin & Tonic ... $10.50" would probably be two different, not consecutive lines for "Gin & Tonic" and "$10.50")
@@ -141,7 +141,7 @@ def get_data_frm_url(url) :
 #https://ocr.space/Content/Images/receipt-ocr-original.jpg
 #https://makereceipt.com/images/restaurant-bar-receipt-sample.jpg
 #https://i.postimg.cc/jSrPyWJC/60c4199364474569561cba359d486e6c69ae8cba.jpg
-test_url = ocr_space_url(url='https://ocr.space/Content/Images/receipt-ocr-original.jpg')
+test_url = ocr_space_url(url='https://i.postimg.cc/jSrPyWJC/60c4199364474569561cba359d486e6c69ae8cba.jpg')
 print(get_data_frm_url(test_url))
 
 receipt_list = []
@@ -152,7 +152,11 @@ def get_data():
 
 @app.route('/api/photo', methods=['POST'])
 def photo():
-    receipt_list.append(get_data_frm_url())
+    photo = request.data.decode('utf-8')
+    test_json = ocr_space_url(url=photo)
+    receipt_list.append(get_data_frm_json(test_json))
+    print(receipt_list)
+    return jsonify({"status": "success", "received_url": photo, "receipt_data": test_json})
 
 if __name__ == '__main__':
     app.run(debug=True)

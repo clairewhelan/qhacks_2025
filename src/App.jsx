@@ -6,6 +6,7 @@ import Menu from './components/Menu.jsx';
 import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
 import SignUp from './pages/SignUp.jsx';
+import Data from './pages/data.jsx';
 import './App.css';
 
 function App() {
@@ -24,9 +25,10 @@ function App() {
         <Menu />
         <main className="flex-grow">
           <Routes>
-            <Route path="/home" element={<Home initialData={initialData} />} />
+            <Route path="/home" element={<Home  initialData={initialData} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/sign-up" element={<SignUp />} />
+            <Route path="/data" element={<Data />} />
           </Routes>
         </main>
       </div>
