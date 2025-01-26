@@ -8,7 +8,6 @@ const navigation = [
   { name: 'Home', href: '/home' },
   { name: 'Login', href: '/login' },
   { name: 'Sign Up', href: '/sign-up' },
-  { name: 'About', href: '/about' },
   { name: 'Data', href: '/data' }
 ];
 
@@ -38,7 +37,7 @@ export default function Example() {
               <img
                 alt="Receipt API"
                 src={logo}
-                className="h-8 w-auto"
+                className="h-20 w-auto"
               />
             </div>
             {/* Navigation Links */}
