@@ -12,7 +12,7 @@ from firebase_admin import credentials, firestore, auth
 from firebase_admin._auth_utils import EmailAlreadyExistsError
 from firebase_config import firebase_config
 
-cred = credentials.Certificate('secrets/serviceAccountKey.json')
+cred = credentials.Certificate('serviceAccountKey.json')
 firebase_app = firebase_admin.initialize_app(cred, {
     'projectId': firebase_config['projectId'],
     'storageBucket': firebase_config['storageBucket']
