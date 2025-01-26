@@ -27,3 +27,6 @@ dist-ssr
 
 # ignore
 src/firebase.js
+
+#ignore
+secrets/serviceAccountKey.json
