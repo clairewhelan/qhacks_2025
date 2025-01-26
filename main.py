@@ -217,6 +217,42 @@ def delete_receipt():
         print(f"Error: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
+# I had some issues with the sign-up API (I will fix this after the HackaThon)
+@app.route('/api/sign-up', methods=['POST'])
+def sign_up():
+    try:
+        # Get user data from request
+        data = request.json
+        email = data.get('email')
+        password = data.get('password')
+        full_name = data.get('fullName')
+
+        if not email or not password or not full_name:
+            return jsonify({"status": "error", "message": "Missing required fields"}), 400
+
+        # Create user in Firebase Auth
+        try:
+            user = auth.create_user(
+                email=email,
+                password=password,
+                display_name=full_name
+            )
+        except EmailAlreadyExistsError:
+            return jsonify({"status": "error", "message": "Email already in use"}), 400
+
+        # Store additional user details in Firestore
+        db.collection('users').document(user.uid).set({
+            'email': email,
+            'fullName': full_name,
+            'createdAt': datetime.utcnow()
+        })
+
+        return jsonify({"status": "success", "message": "User registered successfully", "uid": user.uid}), 201
+
+    except Exception as e:
+        print(f"Error during sign-up: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
 if __name__ == '__main__':
     app.run(debug=True, threaded=True)
 
