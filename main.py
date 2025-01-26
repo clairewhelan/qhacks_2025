@@ -8,18 +8,18 @@ import os
 from dateutil import parser
 import re
 import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
+from firebase_admin import credentials, firestore, auth
+from firebase_admin._auth_utils import EmailAlreadyExistsError
+from firebase_config import firebase_config
 
 cred = credentials.Certificate('secrets/serviceAccountKey.json')
-firebase_app = firebase_admin.initialize_app(cred)
+firebase_app = firebase_admin.initialize_app(cred, {
+    'projectId': firebase_config['projectId'],
+    'storageBucket': firebase_config['storageBucket']
+})
 
 # Initialize Firestore
 db = firestore.client()
-
-# Test Firestore connection by writing a document
-doc_ref = db.collection("users").document("alovelace")
-doc_ref.set({"first": "Ada", "last": "Lovelace", "born": 1815})
 
 # Load environment variables from .env file
 load_dotenv()
@@ -136,13 +136,9 @@ def get_data_frm_json(url) :
     lines = receipt['ParsedResults'][0]["TextOverlay"]["Lines"]
     return get_date_and_amnt(lines) | (get_type_genai(lines))
 
-    
-
 #https://ocr.space/Content/Images/receipt-ocr-original.jpg
 #https://makereceipt.com/images/restaurant-bar-receipt-sample.jpg
 #https://i.postimg.cc/jSrPyWJC/60c4199364474569561cba359d486e6c69ae8cba.jpg
-test_url = ocr_space_url(url='https://i.postimg.cc/jSrPyWJC/60c4199364474569561cba359d486e6c69ae8cba.jpg')
-print(get_data_frm_url(test_url))
 
 receipt_list = []
 
@@ -158,6 +154,69 @@ def photo():
     print(receipt_list)
     return jsonify({"status": "success", "received_url": photo, "receipt_data": test_json})
 
+@app.route('/api/user-data', methods=['POST'])
+def user_data():
+    try:
+        id_token = request.json['idToken']
+        decoded_token = auth.verify_id_token(id_token)
+        uid = decoded_token['uid']
+        doc_ref = db.collection('users').document(uid)
+        doc = doc_ref.get()
+        if doc.exists:
+            return jsonify({"status": "success", "data": doc.to_dict()})
+        else:
+            return jsonify({"status": "error", "message": "No such document"}), 404
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/save-receipt', methods=['POST'])
+def save_receipt():
+    try:
+        id_token = request.json['idToken']
+        photo_url = request.json['photoUrl']
+        decoded_token = auth.verify_id_token(id_token)
+        uid = decoded_token['uid']
+        
+        test_json = ocr_space_url(url=photo_url)
+        parsed_data = get_data_frm_json(test_json)
+
+        doc_ref = db.collection('users').document(uid)
+
+        doc = doc_ref.get()
+        if not doc.exists or 'receipts' not in doc.to_dict():
+            print("Initializing 'receipts' field as an empty array.")
+            doc_ref.set({'receipts': []}, merge=True)
+        
+        try:
+            doc_ref.update({
+                "receipts": firestore.ArrayUnion([parsed_data])
+            })
+            return jsonify({"status": "success", "data": parsed_data})
+        except Exception as firestore_error:
+            print(f"Error updating Firestore: {firestore_error}")
+            return jsonify({"status": "error", "message": str(firestore_error)}), 500
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
+@app.route('/api/delete-receipt', methods=['POST'])
+def delete_receipt():
+    try:
+        id_token = request.json['idToken']
+        receipt = request.json['receipt']
+        decoded_token = auth.verify_id_token(id_token)
+        uid = decoded_token['uid']
+        
+        doc_ref = db.collection('users').document(uid)
+        doc_ref.update({
+            "receipts": firestore.ArrayRemove([receipt])
+        })
+        return jsonify({"status": "success"})
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, threaded=True)
 

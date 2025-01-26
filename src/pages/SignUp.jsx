@@ -1,11 +1,35 @@
 import React, { useState } from 'react';
 
+const sendFormDataToBackend = (formData, setError) => {
+  fetch('/api/sign-up', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(formData),  // Send the form data as JSON
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'error') {
+      setError(data.message);
+    } else {
+      console.log('Success:', data);
+      setError('');
+    }
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+    setError('An unexpected error occurred');
+  });
+}
+
 function SignUp() {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     password: ''
   });
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -15,21 +39,10 @@ function SignUp() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
-
-    // Send form data to the backend
-    const response = await fetch('/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    });
-
-    const result = await response.json();
-    console.log(result); // Handle the response from the backend
+    sendFormDataToBackend(formData, setError);  // Send the form data to the backend
   };
 
   return (
@@ -42,6 +55,7 @@ function SignUp() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          {error && <div className="mb-4 text-red-500">{error}</div>}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <div className="flex items-center justify-between">
@@ -73,7 +87,7 @@ function SignUp() {
                   name="email"
                   type="email"
                   required
-                  autoComplete="email" // Explicitly set autocomplete to email
+                  autoComplete="email"
                   value={formData.email}
                   onChange={handleChange}
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-black outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
