@@ -7,6 +7,19 @@ from dotenv import load_dotenv
 import os
 from dateutil import parser
 import re
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+cred = credentials.Certificate('secrets/serviceAccountKey.json')
+firebase_app = firebase_admin.initialize_app(cred)
+
+# Initialize Firestore
+db = firestore.client()
+
+# Test Firestore connection by writing a document
+doc_ref = db.collection("users").document("alovelace")
+doc_ref.set({"first": "Ada", "last": "Lovelace", "born": 1815})
 
 # Load environment variables from .env file
 load_dotenv()
@@ -118,7 +131,7 @@ Takes a url for a receipt image and returns a dictionary with the date and total
 '''
 def get_data_frm_url(url) :
     receipt = JSON.loads(url)
-
+    print(receipt)
     # dict of lines in receipt(parses lines within columns, so ex. "Gin & Tonic ... $10.50" would probably be two different, not consecutive lines for "Gin & Tonic" and "$10.50")
     lines = receipt['ParsedResults'][0]["TextOverlay"]["Lines"]
     return get_date_and_amnt(lines) | (get_type_genai(lines))
@@ -128,7 +141,7 @@ def get_data_frm_url(url) :
 #https://ocr.space/Content/Images/receipt-ocr-original.jpg
 #https://makereceipt.com/images/restaurant-bar-receipt-sample.jpg
 #https://i.postimg.cc/jSrPyWJC/60c4199364474569561cba359d486e6c69ae8cba.jpg
-test_url = ocr_space_url(url='https://i.postimg.cc/jSrPyWJC/60c4199364474569561cba359d486e6c69ae8cba.jpg')
+test_url = ocr_space_url(url='https://ocr.space/Content/Images/receipt-ocr-original.jpg')
 print(get_data_frm_url(test_url))
 
 receipt_list = []

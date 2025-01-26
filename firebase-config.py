@@ -1,9 +1,9 @@
 firebase_config = {
-    "apiKey": "AIzaSyCqKasJk6aDYfP5c65CdeZXjpL8f-WV0AI",
-    "authDomain": "qhacks2025-83b22.firebaseapp.com",
-    "projectId": "qhacks2025-83b22",
-    "storageBucket": "qhacks2025-83b22.firebasestorage.app",
-    "messagingSenderId": "286615348051",
-    "appId": "1:286615348051:web:3277c703caf22c755f37a6",
-    "measurementId": "G-08EGV7HN0R"
+    "apiKey": "AIzaSyD6WzwM1GyAkKk7SaW_XtNEFGccXsnkyvs",
+    "authDomain": "qhacks2025-beb62.firebaseapp.com",
+    "projectId": "qhacks2025-beb62",
+    "storageBucket": "qhacks2025-beb62.firebasestorage.app",
+    "messagingSenderId": "127120651397",
+    "appId": "1:127120651397:web:d4c094cfe1efe592b0a5ec",
+    "measurementId": "G-GNFDBDPW7G"
 }
