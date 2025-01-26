@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-function Home( {initialData} ) {
+function Home({ initialData }) {
   return (
     <div className="container mx-auto mt-16 p-4">
       <h1>{initialData.message}</h1>
